@@ -5,13 +5,13 @@ jobs:
     runs-on: windows-2022
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cleanup Disk Space
         run: |
-          # Xóa bớt dữ liệu thừa trên server để lấy chỗ cho bộ thư viện 15GB
-          Remove-Item -Recurse -Force "C:\Program Files\dotnet"
-          Remove-Item -Recurse -Force "C:\Android"
+          # Xóa dữ liệu thừa để đủ chỗ cho bộ thư viện 15GB của Blender
+          Remove-Item -Recurse -Force "C:\Program Files\dotnet" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "C:\Android" -ErrorAction SilentlyContinue
 
       - name: Install Libraries
         run: ./make.bat update
@@ -20,7 +20,7 @@ jobs:
         run: ./make.bat release
 
       - name: Upload Result
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: GooEngine-Windows
+          name: GooEngine-Windows-Final
           path: ../build_windows_Full_x64_vc17_Release/bin/Release/
