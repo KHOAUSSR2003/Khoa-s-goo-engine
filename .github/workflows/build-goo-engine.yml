@@ -7,14 +7,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Đảm bảo có Python để script không báo lỗi "Python not found"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Cleanup Disk Space
         run: |
-          # Xóa dữ liệu thừa để đủ chỗ cho bộ thư viện 15GB của Blender
           Remove-Item -Recurse -Force "C:\Program Files\dotnet" -ErrorAction SilentlyContinue
           Remove-Item -Recurse -Force "C:\Android" -ErrorAction SilentlyContinue
 
+      # Sử dụng lệnh "echo y |" để tự động trả lời Yes cho câu hỏi tải thư viện
       - name: Install Libraries
-        run: ./make.bat update
+        run: echo y | ./make.bat update
 
       - name: Compile Goo Engine
         run: ./make.bat release
