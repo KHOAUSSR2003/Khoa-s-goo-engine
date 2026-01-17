@@ -4,23 +4,23 @@ jobs:
   build:
     runs-on: windows-2022
     steps:
-      - name: Checkout mã nguồn
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Giải phóng dung lượng ổ đĩa
+      - name: Cleanup Disk Space
         run: |
-          # Xóa các thành phần không cần thiết trên server GitHub để lấy 20GB trống
-          rm -rf "C:/Program Files/dotnet"
-          rm -rf "C:/Android"
+          # Xóa bớt dữ liệu thừa trên server để lấy chỗ cho bộ thư viện 15GB
+          Remove-Item -Recurse -Force "C:\Program Files\dotnet"
+          Remove-Item -Recurse -Force "C:\Android"
 
-      - name: Tải thư viện bổ trợ (SVN)
+      - name: Install Libraries
         run: ./make.bat update
 
-      - name: Biên dịch Release
+      - name: Compile Goo Engine
         run: ./make.bat release
 
-      - name: Upload sản phẩm
+      - name: Upload Result
         uses: actions/upload-artifact@v3
         with:
-          name: Goo-Engine-Final
+          name: GooEngine-Windows
           path: ../build_windows_Full_x64_vc17_Release/bin/Release/
