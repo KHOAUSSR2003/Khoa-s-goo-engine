@@ -1,0 +1,32 @@
+name: Build Goo Engine Windows
+on: 
+  workflow_dispatch: # Cho phép bạn nhấn nút chạy thủ công
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout mã nguồn
+        uses: actions/checkout@v3
+
+      - name: Cài đặt Python & CMake
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Tải thư viện bổ trợ (SVN)
+        run: |
+          # Bước này sẽ tải các file .lib, .dll nặng ~15GB
+          # Lưu ý: Disk space trên GitHub runner có hạn (~14GB free), 
+          # nên đôi khi cần dùng script tối ưu hoặc xóa bớt file rác.
+          ./make.bat update
+
+      - name: Tiến hành Build
+        run: |
+          ./make.bat release
+
+      - name: Đóng gói và Upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: Goo-Engine-Windows-Build
+          path: ../build_windows_Full_x64_vc17_Release/bin/Release/
