@@ -1,7 +1,5 @@
-name: Build Goo Engine Windows
-on: 
-  workflow_dispatch:
-
+name: Build Goo Engine
+on: workflow_dispatch
 jobs:
   build:
     runs-on: windows-2022
@@ -9,18 +7,20 @@ jobs:
       - name: Checkout mã nguồn
         uses: actions/checkout@v3
 
-      # BƯỚC QUAN TRỌNG: Xóa các phần mềm thừa trên máy chủ GitHub để lấy 20GB+ dung lượng
       - name: Giải phóng dung lượng ổ đĩa
         run: |
-          Get-ChildItem -Path "C:\Program Files\dotnet" -Recurse | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
-          Get-ChildItem -Path "C:\Android" -Recurse | Remove-Item -Force -Recurse -ErrorAction SilentlyContinue
+          # Xóa các thành phần không cần thiết trên server GitHub để lấy 20GB trống
+          rm -rf "C:/Program Files/dotnet"
+          rm -rf "C:/Android"
 
       - name: Tải thư viện bổ trợ (SVN)
-        run: |
-          # Chạy lệnh update để lấy lib
-          ./make.bat update
+        run: ./make.bat update
 
-      - name: Tiến hành Build
-        run: |
-          # Dùng lệnh này để build bản rút gọn, tránh tràn bộ nhớ
-          ./make.bat release
+      - name: Biên dịch Release
+        run: ./make.bat release
+
+      - name: Upload sản phẩm
+        uses: actions/upload-artifact@v3
+        with:
+          name: Goo-Engine-Final
+          path: ../build_windows_Full_x64_vc17_Release/bin/Release/
